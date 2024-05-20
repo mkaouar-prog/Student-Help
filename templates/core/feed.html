@@ -1,0 +1,218 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles/core/post_card.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success w-50 mt-4 mx-auto text-center {{ message.tags }}" role="alert" style="font-size: 13px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div class="card mx-auto mb-4" style="max-width: 32rem;">
+                    <div class="card-body">
+                        <div>
+
+                            <!-- Post Create Form -->
+                            <form method="POST" action="{% url 'post_create_view' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% for field in form %}
+                                {% if field.name == 'text' %}
+                                <div class="mb-2" >{{ field }}</div>
+
+        <div class="mb-2">
+            <button type="button" class="btn btn-success" onclick="setText('offre')">Offre</button>
+            <button type="button" class="btn btn-danger" onclick="setText('demande')">Demande</button>
+        </div>
+    {% else %}
+        <div class="mb-2" onchange="showAdditionalFields()">{{ field }}</div>
+    {% endif %}
+                                    
+                                {% endfor %}
+                                <div class="mb-2">
+                                    <label for="category" hidden>Category:</label>
+                                    <select name="category" id="category" class="form-select" hidden >
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div  class="mb-2" id="additionalFieldsDiv"></div>
+                                    <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                                    
+                                    <script>
+                                           function setText(type) {
+        var textInput = document.getElementById('text-input');
+        if (type === 'offre') {
+            textInput.value = 'Offre';
+        } else if (type === 'demande') {
+            textInput.value = 'Demande';
+        }
+    }
+                                        function showAdditionalFields() {
+                                            var category = document.getElementById("id_categories").value;
+                                            var additionalFieldsDiv = document.getElementById("additionalFieldsDiv");
+                                            additionalFieldsDiv.innerHTML = ""; // Clear previous additional fields
+                                            var selectElement = document.getElementById("category");
+                                            switch (category) {
+                                                case "1": // Stage category
+                                                additionalFieldsDiv.innerHTML = `
+                                                    <div class="mb-2">
+                                                        <label for="departure_time">Departure Time:</label>
+                                                        <input type="date" name="departure_time" id="departure_time" class="form-control">
+                                                    </div>
+                                                                                    <div class="mb-2">
+                                                        <label for="typestage">Type Stage:</label>
+                                                        <select name="typestage" id="typestage" class="form-control">
+                                                            <option value="1">Ouvrier</option>
+                                                            <option value="2">Technicien</option>
+                                                            <option value="3">PFE</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="societe">Societe:</label>
+                                                        <input type="text" name="societe" id="societe" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="duree">Duree:</label>
+                                                        <input type="number" name="duree" id="duree" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="sujet">Sujet:</label>
+                                                        <input type="text" name="sujet" id="sujet" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="contactinfo">Contact Info:</label>
+                                                        <input type="text" name="contactinfo" id="contactinfo" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="specialite">Specialite:</label>
+                                                        <input type="text" name="specialite" id="specialite" class="form-control">
+                                                    </div>
+                                                `;
+                                                selectElement.value = 1;
+                                                break;
+                                                case "2": // Carpooling category
+                                                additionalFieldsDiv.innerHTML = `
+                                                    <div class="mb-2">
+                                                        <label for="start_date">Start Date:</label>
+                                                        <input type="date" name="start_date" id="start_date" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="end_date">End Date:</label>
+                                                        <input type="date" name="end_date" id="end_date" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="location">Location:</label>
+                                                        <textarea name="location" id="location" class="form-control"></textarea>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="description">Description:</label>
+                                                        <textarea name="description" id="description" class="form-control"></textarea>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="contactinfo">Contact Info:</label>
+                                                        <input type="text" name="contactinfo" id="contactinfo" class="form-control">
+                                                    </div>
+                                                `;
+                                                selectElement.value = 2;
+                                                break;
+
+                                                case "3": // Absence category
+                                                additionalFieldsDiv.innerHTML = `
+                                                      <div class="mb-2">
+                                                        <label for="titre">Title:</label>
+                                                        <input type="text" name="titre" id="titre" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="event_date">Event Date:</label>
+                                                        <input type="date" name="event_date" id="event_date" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="location">Location:</label>
+                                                        <input type="text" name="location" id="location" class="form-control">
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label for="contactinfo">Contact Info:</label>
+                                                        <input type="text" name="contactinfo" id="contactinfo" class="form-control">
+                                                    </div>
+                                                    
+                                                    `;
+                                                    selectElement.value = 3;
+                                                    break;
+                                                case "4": // Absence category
+                                                additionalFieldsDiv.innerHTML = `
+                                                <div class="mb-2">
+                                                    <label for="departure_time">Departure Time:</label>
+                                                    <input type="time" name="departure_time" id="departure_time" class="form-control">
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label for="destination">Destination:</label>
+                                                    <input type="text" name="destination" id="destination" class="form-control">
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label for="depart">Depart:</label>
+                                                    <input type="text" name="depart" id="depart" class="form-control">
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label for="nbsiege">Number of Seats:</label>
+                                                    <input type="number" name="nbsiege" id="nbsiege" class="form-control">
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label for="duree">Duration:</label>
+                                                    <input type="number" name="duree" id="duree" class="form-control">
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label for="contactinfo">Contact Info:</label>
+                                                    <input type="text" name="contactinfo" id="contactinfo" class="form-control">
+                                                </div>
+                                                    
+                                                    `;
+                                                    selectElement.value = 4;
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        }
+                                    
+                                        // Event listener to trigger showAdditionalFields on category change
+                                        document.getElementById("category").addEventListener("change", showAdditionalFields);
+                                    
+                                        // Show additional fields on page load if a category is already selected
+                                        window.addEventListener("DOMContentLoaded", showAdditionalFields);
+                                    </script>
+                                    </div>
+                                    </form>
+                            <!-- Post Create Form End -->
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-8">
+
+                <!-- All the posts in database -->
+                {% for post in all_posts %}
+
+                    <!-- Single Posts Card -->
+                    {% include 'components/post_card.html' %}
+                    
+                {% endfor %}
+                <!-- All the posts in database -->
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
